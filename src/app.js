@@ -4,19 +4,31 @@ import productsRouter from "./routes/products.router.js";
 import contactRouter from "./routes/contact.router.js";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
+
 import adminRouter from "./routes/admin.router.js";
 import cartRouter from "./routes/cart.router.js";
 import handlebars from "express-handlebars";
+
+import rolesModel from "./models/roles.js";
+import adminsModel from "./models/admin.js";
+import userModel from "./models/user.js";
+
 import viewsRouter from "./routes/views.router.js";
 import mongoose from "mongoose";
+import cartModel from "./models/cartModel.js";
+
 
 const app = express();
+const PORT = process.env.PORT||8080;
+const server = app.listen(PORT,()=> console.log(`Listening on ${PORT} `));
 
-const connection = mongoose.connect("mongodb+srv://flex:123Motos@solomotoscluster.ojbrcir.mongodb.net/?retryWrites=true&w=majority");
-
+const io = new Server(server); // Create socket.io server instance.
+  
 app.use(express.json());//puedo leer peticiones.
 app.use(express.urlencoded({extended:true}));//puedo leer de lo que viene de la url
 // app.use(express.static(`${__dirname}/public`));
+
+
 
 // comienza la petición.
 // const validacionUser = (req,res,next)=>{
@@ -26,8 +38,9 @@ app.use(express.urlencoded({extended:true}));//puedo leer de lo que viene de la 
 //     res.send({status:"Success", message:"Bienvenid@"});
 //     next();
 // }
-
 // app.use(validacionUser);
+
+
 
 //Mis rutas .
 app.use("/api/users", userRouter);
@@ -44,29 +57,68 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars"); //uso handlebars.
 
+
+
+//conexiones
+const context = async()=>{
+const connection = mongoose.connect("mongodb+srv://flex:123Motos@solomotoscluster.ojbrcir.mongodb.net/BaseSoloMotos?retryWrites=true&w=majority");
+// // creo un admin:
+const admin = {
+    firstName: "Juan",
+    lastName: "Rodriguez",
+    email: "juan@correo.com",
+ 
+}
+await adminsModel.create(admin);
+
+const roles = {
+    title: "Admin1",
+    description: "añade, actualiza, elimina",
+    nameAdmin: "Flavia"
+}
+await rolesModel.create(roles);
+}
+
+
+// agregamos un producto al admin:
+
+const adminId = "6473d69a99906c3f531a179b";
+const rolesAdminId = "6473ccd2642a14f2a42204f9";
+
+// await adminsModel.updateOne(
+//     {_id:adminId},
+//     {$push:{roles:{roles:new mongoose.Types.ObjectId(rolesAdminId)}}}
+// );
+
+context();
+
+
+
+
+
 export default function socketProducts(socketServer){
     socketServer.on('connection', async socket => {
     
-    const data = await encuadernacion.getProducts()
+    const data = await solo.getProducts()
   
     socket.emit('products', { data } )
 
     socket.on('product', async data => {
 
         try {        
-            const valueReturned = await encuadernacion.addProduct(data)
+            const valueReturned = await solo.addProduct(data)
           
             socket.emit('message', valueReturned)
         }
-        catch (err) {
-            console.log(err);
+        catch (error) {
+            console.log(error);
         }
 
     });
 
     socket.on('delete', async data => {
 
-        const result = await encuadernacion.deleteProduct(data)
+        const result = await solo.deleteProduct(data)
         
         socket.emit('delete', result)
     });
@@ -75,6 +127,5 @@ export default function socketProducts(socketServer){
 });
 };
 
-app.listen(8080,()=> console.log("Listening on PORT"));
 
 
