@@ -2,6 +2,7 @@ import express from "express";
 import userRouter from "./routes/users.router.js";
 import productsRouter from "./routes/products.router.js";
 import contactRouter from "./routes/contact.router.js";
+import homeRouter from "./routes/home.router.js"; 
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
 
@@ -16,6 +17,11 @@ import userModel from "./models/user.js";
 import viewsRouter from "./routes/views.router.js";
 import mongoose from "mongoose";
 import cartModel from "./models/cartModel.js";
+
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import sessionRouter from "./routes/sessions.router.js";
+
 
 
 const app = express();
@@ -44,12 +50,13 @@ app.use(express.urlencoded({extended:true}));//puedo leer de lo que viene de la 
 
 //Mis rutas .
 app.use("/api/users", userRouter);
-app.use("/api/products", productsRouter);
+app.use("/api/products", productsRouter); 
 app.use("/api/contact", contactRouter);
 app.use("/api/admin", adminRouter);
 app.use("api/cart", cartRouter);
+app.use("/api/home", homeRouter);
 app.use("/", viewsRouter);
-app.use(express.static(`${__dirname}/public`));
+
 
 
 //motores de plantilla
@@ -57,11 +64,33 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars"); //uso handlebars.
 
+//session-trabaja con 4 conceptos importantes.
+const connection = mongoose.connect("mongodb+srv://flex:123Motos@solomotoscluster.ojbrcir.mongodb.net/modulo2?retryWrites=true&w=majority");
+
+app.use(session({
+
+    store: new MongoStore ({
+        mongoUrl:"mongodb+srv://flex:123Motos@solomotoscluster.ojbrcir.mongodb.net/modulo2?retryWrites=true&w=majority", //url de la base de datos.
+        ttl:30,
+    }),
+
+    secret: "Palabra3ecreta",
+    resave: false,
+    saveUninitialized:false,
+
+}));
+app.use("/", viewsRouter);
+app.use("/api/sessions", sessionRouter)
+
+app.get("/", (req, res)=>{
+    req.session.user1= {numero1:true};
+    res.send("Pass!");
+});
 
 
 //conexiones
-const context = async()=>{
-const connection = mongoose.connect("mongodb+srv://flex:123Motos@solomotoscluster.ojbrcir.mongodb.net/BaseSoloMotos?retryWrites=true&w=majority");
+// const context = async()=>{
+// const connection = mongoose.connect("mongodb+srv://flex:123Motos@solomotoscluster.ojbrcir.mongodb.net/BaseSoloMotos?retryWrites=true&w=majority");
 // // creo un admin:
 const admin = {
     firstName: "Juan",
@@ -77,7 +106,7 @@ const roles = {
     nameAdmin: "Flavia"
 }
 await rolesModel.create(roles);
-}
+// }
 
 
 // agregamos un producto al admin:
@@ -90,7 +119,7 @@ const rolesAdminId = "6473ccd2642a14f2a42204f9";
 //     {$push:{roles:{roles:new mongoose.Types.ObjectId(rolesAdminId)}}}
 // );
 
-context();
+// context();
 
 
 
