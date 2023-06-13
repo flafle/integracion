@@ -25,13 +25,13 @@ router.get("/products", (req, res)=>{
         css:"products"
     })
 });
-//usuari@s:
+//usuari@s: es mi login
 router.get("/users", (req, res)=>{
     res.render("users");
-})
-//registro:
+});
+//registro: es mi sing up
 router.get("/register", (req, res)=>{
     res.render("register");
-})
+});
 
 export default router;

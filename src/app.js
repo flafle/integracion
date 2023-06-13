@@ -24,6 +24,7 @@ import sessionRouter from "./routes/sessions.router.js";
 
 
 
+
 const app = express();
 const PORT = process.env.PORT||8080;
 const server = app.listen(PORT,()=> console.log(`Listening on ${PORT} `));
@@ -32,7 +33,7 @@ const io = new Server(server); // Create socket.io server instance.
   
 app.use(express.json());//puedo leer peticiones.
 app.use(express.urlencoded({extended:true}));//puedo leer de lo que viene de la url
-// app.use(express.static(`${__dirname}/public`));
+app.use(express.static(`${__dirname}/public`));
 
 
 
@@ -56,6 +57,7 @@ app.use("/api/admin", adminRouter);
 app.use("api/cart", cartRouter);
 app.use("/api/home", homeRouter);
 app.use("/", viewsRouter);
+
 
 
 

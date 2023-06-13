@@ -15,7 +15,7 @@ from.addEventListener("submit", async event =>{
         body: JSON.stringify(obj),
         headers: {
             "Content-Type" : "aplication/json"
-        }
+        } //para comunicarme el front con el back
      });
      response.status(200)
      const responseData = response.json();
