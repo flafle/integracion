@@ -4,7 +4,7 @@ const router = Router();
 const home = [];
 
 
-router.get("/", (req,res)=>{
+router.get("/main", (req,res)=>{
     res.send(home);
 
 });

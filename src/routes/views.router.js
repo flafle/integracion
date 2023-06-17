@@ -13,6 +13,10 @@ router.get("/", (req, res)=>{
 });
 
 });
+router.get("/main", (req, res)=>{
+    res.render("main");
+
+});
 //productos:
 router.get("/products", (req, res)=>{
     const producto = [
@@ -32,6 +36,12 @@ router.get("/users", (req, res)=>{
 //registro: es mi sing up
 router.get("/register", (req, res)=>{
     res.render("register");
+});
+//profile:
+router.get("/profile", (req, res)=>{
+    res.render ("/profile",{
+        user:req.session.user
+    } );
 });
 
 export default router;

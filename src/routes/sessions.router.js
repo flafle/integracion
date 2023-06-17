@@ -19,7 +19,7 @@ router.post("/login", async (req, res)=>{
     if (!user) return res.status(400).send ({status: "error", error: "User o pass incorreto"})
     console.log(req.body);
     //si existe:
-    req.session.user = {
+    req.session.user = { //estoy creacndo in objeto user en la session
         name: `${user.firstName} ${user.lastName}`,
         email: user.email
          
