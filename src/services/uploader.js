@@ -1,5 +1,13 @@
 import multer from "multer";
 import __dirname from "../utils.js";
+import bcrypt, { hash } from "bcrypt";
+
+//dos metodos principales del bc
+export const createHash = async (password) => {
+    const salts = await bcrypt.genSalt(10);
+    return bcrypt.hash(password, salts);
+}
+export const validatePassword = (password, hashedpassword) => bcrypt.compareSync(password, hashedpassword);
 
 //donde dejo mis archivos:
 

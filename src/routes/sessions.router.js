@@ -1,3 +1,22 @@
+// import BaseRouter from "./Router.js";
+
+// export default class SessionRouter extends BaseRouter {
+
+//     init() {
+//         this.post("/register", (req,res)=>{
+//             res.sendSuccess("test")
+//         });
+
+//         this.post("/login",(req, res)=>{
+//             res.sendSuccess("test")
+//         })
+//     }
+// }
+
+
+
+
+
 import { Router } from "express";
 import user from "../models/user.js";
 

@@ -20,6 +20,7 @@ import cartModel from "./models/cartModel.js";
 
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import initializePassportStrategies from "./config/pasport.config.js";
 import sessionRouter from "./routes/sessions.router.js";
 
 
@@ -34,7 +35,7 @@ const io = new Server(server); // Create socket.io server instance.
 app.use(express.json());//puedo leer peticiones.
 app.use(express.urlencoded({extended:true}));//puedo leer de lo que viene de la url
 app.use(express.static(`${__dirname}/public`));
-
+initializePassportStrategies();
 
 
 // comienza la petición.
